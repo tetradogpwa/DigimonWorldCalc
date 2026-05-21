@@ -1,5 +1,7 @@
 import { Stats, BonusStats, DigimonLevel } from "./types";
 import { EvolutionRequirements } from "./evolutionRequirements";
+import { EVOLUTION_PATHS } from "./evolutionPaths";
+import { getDigimon } from "./calculator";
 
 export class Digimon {
   name: string;
@@ -19,6 +21,16 @@ export class Digimon {
     this.requirements = requirements;
   }
 
+  get targets(){
+    return EVOLUTION_PATHS[this.name].targets.map(getDigimon)
+  }
+
+  get srcPictureGif(){
+    return `./imgs/${this.name}.gif`
+  }
+  get srcPicturePng(){
+    return `./imgs/${this.name}.png`
+  }
   /**
    * Calculates the stats gained on next training session.
    * If current stat already meets the gain cap, returns 10% of the cap.
