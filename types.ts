@@ -1,11 +1,11 @@
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
 export enum DigimonLevel {
-  Fresh = 0,
-  InTraining = 1,
-  Rookie = 2,
-  Champion = 3,
-  Ultimate = 4,
+  Fresh,
+  InTraining,
+  Rookie,
+  Champion,
+  Ultimate,
 }
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
@@ -37,16 +37,16 @@ export interface EvolutionRequirementsData {
   discipline: number;
   techs: number;
   battles: number;
-  minBattles: boolean;
-  minCare: boolean;
-  digimonBonus?: string;
+  MinBattles: boolean;
+  MinCare: boolean;
+  DigimonBonus?: string;
 }
 
 // ─── Digimon ──────────────────────────────────────────────────────────────────
 
 export interface DigimonData {
   name: string;
-  level: DigimonLevel;
+  level: keyof typeof DigimonLevel;
   statsGains: Stats;
   requirements: EvolutionRequirementsData;
 }
@@ -80,7 +80,7 @@ export interface EvolutionResult {
 }
 
 export interface PriorityEntry {
-  name: string;
+  name: keyof typeof DigimonNames;
   score: number;
   enabled: boolean;
   requirementStatus: RequirementStatus;
@@ -90,4 +90,69 @@ export interface PriorityEntry {
 export interface PriorityTableResult {
   entries: PriorityEntry[];
   prioritized?: string;
+}
+
+
+export enum DigimonNames{
+    Agumon,
+Airdramon,
+Andromon,
+Angemon,
+Bakemon,
+Betamon,
+Birdramon,
+Biyomon,
+Botamon,
+Centarumon,
+Coelamon,
+Devimon,
+Digitamamon,
+Drimogemon,
+Elecmon,
+Etemon,
+Frigimon,
+Gabumon,
+Garurumon,
+Giromon,
+Greymon,
+'H-Kabuterimon',
+Kabuterimon,
+Kokatorimon,
+Koromon,
+Kunemon,
+Kuwagamon,
+Leomon,
+Mamemon,
+Megadramon,
+MegaSeadramon,
+Meramon,
+MetalGreymon,
+MetalMamemon,
+Mojyamon,
+Monochromon,
+Monzaemon,
+Nanimon,
+Ninjamon,
+Numemon,
+Ogremon,
+Palmon,
+Patamon,
+Penguinmon,
+Phoenixmon,
+Piximon,
+Poyomon,
+Punimon,
+Seadramon,
+Shellmon,
+SkullGreymon,
+Sukamon,
+Tanemon,
+Tokomon,
+Tsunomon,
+Tyrannomon,
+Unimon,
+Vademon,
+Vegiemon,
+Whamon,
+Yuramon,
 }

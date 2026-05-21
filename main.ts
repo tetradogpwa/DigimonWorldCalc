@@ -1,8 +1,6 @@
 import {getAllDigimonNames,getDigimon} from "./calculator";
+import { DigimonByLevel, Digimons } from "./digimonData";
+import { DigimonLevel } from "./types";
 
 
-const names=getAllDigimonNames();
-const digimon=getDigimon(names[0]);
-
-
-const evolutions=digimon.targets;
+const digimons=DigimonByLevel.Rookie;

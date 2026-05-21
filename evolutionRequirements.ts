@@ -1,4 +1,4 @@
-import { Stats, BonusStats, EvolutionRequirementsData } from "./types";
+import { Stats, BonusStats, EvolutionRequirementsData, DigimonNames } from "./types";
 
 export class EvolutionRequirements implements EvolutionRequirementsData {
   requiredStats: Stats;
@@ -8,30 +8,34 @@ export class EvolutionRequirements implements EvolutionRequirementsData {
   discipline: number;
   techs: number;
   battles: number;
-  minBattles: boolean;
-  minCare: boolean;
-  digimonBonus?: string;
+
 
   constructor(
-    hp: number, mp: number,
-    offense: number, defense: number,
-    speed: number, brains: number,
-    care: number, weight: number,
-    discipline: number, happiness: number,
-    battles: number, techs: number,
-    minCare: boolean, minBattles: boolean,
-    digimonBonus?: string
+    public readonly Hp: number, public readonly Mp: number,
+    public readonly Offense: number, public readonly Defense: number,
+    public readonly Speed: number, public readonly Brains: number,
+    public readonly Care: number, public readonly Weight: number,
+    public readonly Discipline: number, public readonly Happiness: number,
+    public readonly Battles: number, public readonly Techs: number,
+    public readonly MinCare: boolean, public readonly MinBattles: boolean,
+    public readonly DigimonBonus?: keyof typeof DigimonNames
   ) {
-    this.requiredStats = { hp, mp, offense, defense, speed, brains };
-    this.care = care;
-    this.weight = weight;
-    this.happiness = happiness;
-    this.discipline = discipline;
-    this.techs = techs;
-    this.battles = battles;
-    this.minBattles = minBattles;
-    this.minCare = minCare;
-    this.digimonBonus = digimonBonus;
+    this.requiredStats = { hp:this.Hp, mp:this.Mp, offense:this.Offense, defense:this.Defense, speed:this.Speed, brains:this.Brains };
+    this.care = this.Care;
+    this.weight = this.Weight;
+    this.happiness = this.Happiness;
+    this.discipline = this.Discipline;
+    this.techs = this.Techs;
+    this.battles = this.Battles;
+   
+  }
+  reset(){
+        this.care = this.Care;
+    this.weight = this.Weight;
+    this.happiness = this.Happiness;
+    this.discipline = this.Discipline;
+    this.techs = this.Techs;
+    this.battles = this.Battles;
   }
 
   fulfillStats(stats: Stats): boolean {
@@ -44,7 +48,7 @@ export class EvolutionRequirements implements EvolutionRequirementsData {
   }
 
   fulfillCare(care: number): boolean {
-    return this.minCare ? care <= this.care : care >= this.care;
+    return this.MinCare ? care <= this.care : care >= this.care;
   }
 
   fulfillWeight(weight: number): boolean {
@@ -52,17 +56,18 @@ export class EvolutionRequirements implements EvolutionRequirementsData {
   }
 
   fulfillBonus(bonus: BonusStats): boolean {
-    if (this.digimonBonus !== undefined && bonus.current === this.digimonBonus) return true;
-    if (this.techs !== 0 && bonus.techniques >= this.techs) return true;
-    if (this.discipline !== 0 && bonus.discipline >= this.discipline) return true;
-    if (this.happiness !== 0 && bonus.happiness >= this.happiness) return true;
+    let isOk=false;
+    if (this.DigimonBonus !== undefined && bonus.current === this.DigimonBonus) isOk=true;
+    else if (this.techs !== 0 && bonus.techniques >= this.techs) isOk=true;
+    else if (this.discipline !== 0 && bonus.discipline >= this.discipline) isOk=true;
+    else if (this.happiness !== 0 && bonus.happiness >= this.happiness) isOk=true;
 
-    if (this.battles >= 0) {
-      if (this.minBattles && this.battles >= bonus.battles) return true;
-      if (!this.minBattles && this.battles <= bonus.battles) return true;
+    else if (this.battles >= 0) {
+      if (this.MinBattles && this.battles >= bonus.battles) isOk=true;
+      else if (!this.MinBattles && this.battles <= bonus.battles) isOk=true;
     }
 
-    return false;
+    return isOk;
   }
 
   /** Returns a cumulative average of required stats (normalized) for priority scoring. */

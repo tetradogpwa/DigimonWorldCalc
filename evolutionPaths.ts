@@ -1,19 +1,21 @@
-export class EvolutionPath {
-  targets: string[];
+import { DigimonNames } from "./types";
 
-  constructor(targets: string[]) {
-    this.targets = targets;
+export class EvolutionPath {
+  targets: Set<keyof typeof DigimonNames>;
+
+  constructor(targets: (keyof typeof DigimonNames)[]) {
+    this.targets = new Set(targets);
   }
 
-  canEvolveTo(digimon: string): boolean {
-    return this.targets.includes(digimon);
+  canEvolveTo(digimon: keyof typeof DigimonNames): boolean {
+    return this.targets.has(digimon);
   }
 
   /**
    * Returns a flat list of formatted evolution path strings leading to `digimon`.
    * E.g. ["Greymon -> MetalGreymon"]
    */
-  getPaths(digimon: string, getPath: (name: string) => EvolutionPath): string[] {
+  getPaths(digimon: keyof typeof DigimonNames, getPath: (name: keyof typeof DigimonNames) => EvolutionPath): string[] {
     if (this.canEvolveTo(digimon)) return [digimon];
 
     const paths: string[] = [];

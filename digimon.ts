@@ -1,17 +1,17 @@
-import { Stats, BonusStats, DigimonLevel } from "./types";
+import { Stats, BonusStats, DigimonLevel, DigimonNames } from "./types";
 import { EvolutionRequirements } from "./evolutionRequirements";
 import { EVOLUTION_PATHS } from "./evolutionPaths";
 import { getDigimon } from "./calculator";
 
 export class Digimon {
-  name: string;
-  level: DigimonLevel;
+  name: keyof typeof DigimonNames;
+  level:keyof typeof DigimonLevel;
   statsGains: Stats;
   requirements: EvolutionRequirements;
 
   constructor(
-    name: string,
-    level: DigimonLevel,
+    name: keyof typeof DigimonNames,
+    level:keyof typeof DigimonLevel,
     statsGains: Stats,
     requirements: EvolutionRequirements
   ) {
@@ -22,7 +22,7 @@ export class Digimon {
   }
 
   get targets(){
-    return EVOLUTION_PATHS[this.name].targets.map(getDigimon)
+    return Array.from(EVOLUTION_PATHS[this.name].targets).map(getDigimon)
   }
 
   get srcPictureGif(){

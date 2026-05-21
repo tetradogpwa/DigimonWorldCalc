@@ -5,7 +5,7 @@
  * No DOM dependencies — safe to use in any environment (browser, Node, tests).
  */
 
-import { Stats, BonusStats, DigimonLevel } from "./types";
+import { Stats, BonusStats, DigimonLevel, DigimonNames } from "./types";
 import { Digimon } from "./digimon";
 import { EvolutionRequirements } from "./evolutionRequirements";
 import { EvolutionPath } from "./evolutionPaths";
@@ -16,25 +16,25 @@ import {
   PriorityEntry,
   PriorityTableResult,
 } from "./types";
-import { DIGIMONS } from "./digimonData";
+import { Digimons } from "./digimonData";
 import { EVOLUTION_PATHS } from "./evolutionPaths";
 
 // ─── Lookup helpers ───────────────────────────────────────────────────────────
 
-export function getDigimon(name: string): Digimon {
-  const d = DIGIMONS[name];
+export function getDigimon(name: keyof typeof DigimonNames): Digimon {
+  const d = Digimons[name];
   if (!d) throw new Error(`Unknown Digimon: "${name}"`);
   return d;
 }
 
-export function getEvolutionPath(name: string): EvolutionPath {
+export function getEvolutionPath(name: keyof typeof DigimonNames): EvolutionPath {
   const p = EVOLUTION_PATHS[name];
   if (!p) throw new Error(`No evolution path for: "${name}"`);
   return p;
 }
 
-export function getAllDigimonNames(): string[] {
-  return Object.keys(DIGIMONS);
+export function getAllDigimonNames(): (keyof typeof DigimonNames)[] {
+  return Object.keys(Digimons) as any;
 }
 
 // ─── Special evolutions ───────────────────────────────────────────────────────
@@ -48,24 +48,24 @@ const SPECIAL_EVOLUTIONS: Record<string, string> = {
   Kunemon:   "Sleep in Kunemon's bed and you'll have a chance to evolve into Kunemon.",
 };
 
-export function isSpecialEvolution(name: string): boolean {
+export function isSpecialEvolution(name: keyof typeof DigimonNames): boolean {
   return name in SPECIAL_EVOLUTIONS;
 }
 
-export function getSpecialEvolutionMessage(name: string): string | undefined {
+export function getSpecialEvolutionMessage(name: keyof typeof DigimonNames): string | undefined {
   return SPECIAL_EVOLUTIONS[name];
 }
 
 // ─── Stats gain ───────────────────────────────────────────────────────────────
 
-export function calculateStatsGain(targetName: string, currentStats: Stats): StatsGainResult {
+export function calculateStatsGain(targetName: keyof typeof DigimonNames, currentStats: Stats): StatsGainResult {
   return getDigimon(targetName).getStatsGains(currentStats);
 }
 
 // ─── Requirement status ───────────────────────────────────────────────────────
 
 export function getRequirementStatus(
-  targetName: string,
+  targetName: keyof typeof DigimonNames,
   stats: Stats,
   care: number,
   weight: number,
@@ -85,8 +85,8 @@ export function getRequirementStatus(
 // ─── Evolution check ──────────────────────────────────────────────────────────
 
 export function checkEvolution(
-  currentName: string,
-  targetName: string,
+  currentName: keyof typeof DigimonNames,
+  targetName: keyof typeof DigimonNames,
   stats: Stats,
   care: number,
   weight: number,
@@ -121,7 +121,7 @@ export function checkEvolution(
 // ─── Priority table ───────────────────────────────────────────────────────────
 
 export function getPriorityTable(
-  currentName: string,
+  currentName: keyof typeof DigimonNames,
   stats: Stats,
   care: number,
   weight: number,
@@ -137,7 +137,7 @@ export function getPriorityTable(
 
   const scores: Record<string, number> = {};
 
-  if (current.level === DigimonLevel.InTraining) {
+  if (current.level === "InTraining") {
     // For In-Training, score = highest normalized stat matching a requirement
     for (const name of targets) {
       scores[name] = 0;
@@ -172,7 +172,7 @@ export function getPriorityTable(
     }
   }
 
-  const entries: PriorityEntry[] = targets.map(name => ({
+  const entries: PriorityEntry[] =Array.from(targets).map(name => ({
     name,
     score: scores[name] ?? 0,
     enabled: enabled[name] ?? false,
@@ -180,7 +180,7 @@ export function getPriorityTable(
     isSpecial: isSpecialEvolution(name),
   }));
 
-  const prioritized = current.level === DigimonLevel.InTraining
+  const prioritized = current.level === "InTraining"
     ? getPrioritizedRookie(stats, enabled, entries)
     : getPrioritizedDigimon(scores, enabled, entries);
 
